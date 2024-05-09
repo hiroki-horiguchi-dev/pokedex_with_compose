@@ -1,4 +1,4 @@
-package com.pokedex_with_compose.core_model
+package com.example.pokedex_with_compose.model
 
 import kotlinx.serialization.Serializable
 
