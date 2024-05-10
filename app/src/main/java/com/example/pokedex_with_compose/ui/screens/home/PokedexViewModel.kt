@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 sealed interface PokedexApiState {
     data class Success(val data: List<Pokemon>): PokedexApiState
-    data class Error(val error: PokedexApiException): PokedexApiState
+    object Error: PokedexApiState
     object Loading: PokedexApiState
 }
 
@@ -45,10 +45,11 @@ class PokedexViewModel(
                 onSuccess = {
                     TODO("PokedexApiState.Success")
                     TODO("offset の値をとれた List の数だけ更新、offset は Viewmodel が生きている間だけいればいい")
+                    TODO("Room でローカル DB に保存する")
                 },
                 onFailure = {
                     TODO("PokedexApiState.Error")
-                    TODO("現職だとかなり細かくみているので、できるだけ細かくハンドリングしておきたい")
+                    TODO("現職だとかなり細かくみているので、できるだけ細かくハンドリングするサンプルを試しておきたい。")
                 }
             )
         }
