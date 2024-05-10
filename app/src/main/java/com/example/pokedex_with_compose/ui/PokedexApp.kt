@@ -17,6 +17,9 @@ import com.example.pokedex_with_compose.R
 fun PokedexApp(
     modifier: Modifier = Modifier.fillMaxSize()
 ) {
+
+    // TODO("Navhost を定義して一覧画面 --> 詳細画面の導線を作る")
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -34,6 +37,8 @@ fun PokedexApp(
         )
         PokedexScreen(
             pokedexApiState = viewModel.pokedexApiState,
+            retryAction = viewModel::retryAction,
+            loadMoreAction = viewModel::loadMoreAction,
             modifier = modifier.padding(innerPaddingValues))
     }
 }

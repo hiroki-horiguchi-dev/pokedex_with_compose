@@ -49,11 +49,15 @@ class PokedexViewModel(
                 },
                 onFailure = {
                     TODO("PokedexApiState.Error")
-                    TODO("現職だとかなり細かくみているので、できるだけ細かくハンドリングするサンプルを試しておきたい。")
+                    TODO("現職だとかなり細かくみているので、できるだけ細かくハンドリングするサンプルを試しておきたい。と思ったけど別にどうでもいい気もしてきた")
                 }
             )
         }
     }
+
+    fun retryAction() {}
+
+    fun loadMoreAction() {}
 
     companion object {
         private val TAG = PokedexViewModel::class.java.simpleName
