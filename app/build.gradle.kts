@@ -74,4 +74,5 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.retrofit.kotlinx.serialization.converter)
+    implementation(libs.timber)
 }
