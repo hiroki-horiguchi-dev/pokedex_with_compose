@@ -10,7 +10,7 @@ interface PokedexContainer {
 }
 
 class PokedexDefaultContainer: PokedexContainer {
-    private val BASE_URL = "https://pokeapi.co/api/v2/"
+    private val baseUrl = "https://pokeapi.co/api/v2/"
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(HttpRequestInterceptor())
@@ -19,7 +19,7 @@ class PokedexDefaultContainer: PokedexContainer {
     private val pokemonRetrofit = Retrofit.Builder()
         .client(okHttpClient)
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
-        .baseUrl(BASE_URL)
+        .baseUrl(baseUrl)
         .build()
 
     private val pokemonRetrofitService: PokedexService by lazy {

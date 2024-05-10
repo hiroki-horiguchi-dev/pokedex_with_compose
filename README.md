@@ -37,6 +37,8 @@
 3. Repository の作成 (core-data)
 4. Container の作成 (Application クラスをどこに作るかね。。パクリ元の pokedex にはないけど、、うーん。。)
 5. ViewModel, UI の作成 (app)
+6. UI テーマの設定(ぱっと見が黒っぽいのでそんな感じのテーマにする)
+7. アプリアイコンの設定(これはできればでいいや)
 
 # この後の展望
 - [Now in Android](https://github.com/android/nowinandroid) を真似して作ってみる
