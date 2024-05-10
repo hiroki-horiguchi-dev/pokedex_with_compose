@@ -1,7 +1,7 @@
 import com.example.pokedex_with_compose.model.PokemonInfo
 import com.example.pokedex_with_compose.network.model.PokemonResponse
 
-interface PokemonRepository {
+interface PokedexRepository {
     suspend fun fetchPokemonList(
         page: Int,
     ): PokemonResponse
@@ -11,9 +11,9 @@ interface PokemonRepository {
     ): PokemonInfo
 }
 
-class NetworkPokemonRepository(
+class NetworkPokedexRepository(
     private val pokedexService: PokedexService
-) : PokemonRepository {
+) : PokedexRepository {
     override suspend fun fetchPokemonList(page: Int): PokemonResponse = pokedexService.fetchPokemonList(page)
     override suspend fun fetchPokemonInfo(name: String): PokemonInfo = pokedexService.fetchPokemonInfo(name)
 }
