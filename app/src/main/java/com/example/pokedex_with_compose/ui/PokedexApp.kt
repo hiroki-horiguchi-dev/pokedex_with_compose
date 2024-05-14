@@ -31,7 +31,7 @@ fun PokedexApp(
                 }
             )
         }
-    ) {innerPaddingValues ->
+    ) { innerPaddingValues ->
         val viewModel: PokedexViewModel = viewModel(
             factory = PokedexViewModel.Factory
         )

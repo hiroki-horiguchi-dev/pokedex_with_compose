@@ -10,10 +10,12 @@ import com.example.pokedex_with_compose.PokedexApplication
 import com.example.pokedex_with_compose.model.Pokemon
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 
 sealed interface PokedexApiState {
     data class Success(val data: List<Pokemon>): PokedexApiState
-    object Error: PokedexApiState
+    data class Error(val message: String): PokedexApiState
     object Loading: PokedexApiState
 }
 
@@ -30,34 +32,70 @@ class PokedexViewModel(
         private set
 
     init {
-        TODO("Pokemon API の規約に、DBに保存して叩きまくらないようにって書いてあったので room に入れる分岐必須")
         fetchPokemonList()
     }
 
-    fun fetchPokemonList() {
+    private fun fetchPokemonList() {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 pokedexRepository.fetchPokemonList(
                     limit = limit,
-                    offset = 0
+                    offset = offset
                 )
             }.fold(
-                onSuccess = {
-                    TODO("PokedexApiState.Success")
-                    TODO("offset の値をとれた List の数だけ更新、offset は Viewmodel が生きている間だけいればいい")
-                    TODO("Room でローカル DB に保存する")
+                onSuccess = { response ->
+                    val body = response.body()
+                    if (response.isSuccessful && body != null) {
+                        pokedexApiState = PokedexApiState.Success(body.results)
+                        offset += body.count
+                    } else {
+                        errorHandling(response.code())
+                    }
                 },
                 onFailure = {
-                    TODO("PokedexApiState.Error")
-                    TODO("現職だとかなり細かくみているので、できるだけ細かくハンドリングするサンプルを試しておきたい。と思ったけど別にどうでもいい気もしてきた")
+                    errorHandling(it)
                 }
             )
         }
     }
 
-    fun retryAction() {}
+    /**
+     * 通信成功時、エラーハンドリング
+     */
+    private fun errorHandling(code: Int) {
+        pokedexApiState = when (code) {
+            400 -> PokedexApiState.Error(message = "Bad Request")
+            401 -> PokedexApiState.Error(message = "Unauthorized")
+            403 -> PokedexApiState.Error(message = "Forbidden")
+            404 -> PokedexApiState.Error(message = "Not Found")
+            else -> PokedexApiState.Error(message = "その他のエラー")
+        }
+    }
 
-    fun loadMoreAction() {}
+    /**
+     * 通信失敗時、エラーハンドリング
+     */
+    private fun errorHandling(throwable: Throwable) {
+        pokedexApiState = when(throwable) {
+            is IOException -> PokedexApiState.Error(message = "ネットワークエラー")
+            is HttpException -> PokedexApiState.Error(message = "サーバーエラー")
+            else -> PokedexApiState.Error(message = "その他のエラー")
+        }
+    }
+
+    /**
+     * リトライアクション、エラー時に使用
+     */
+    fun retryAction() {
+        fetchPokemonList()
+    }
+
+    /**
+     * 追加読み込み時に使用
+     */
+    fun loadMoreAction() {
+        fetchPokemonList()
+    }
 
     companion object {
         private val TAG = PokedexViewModel::class.java.simpleName

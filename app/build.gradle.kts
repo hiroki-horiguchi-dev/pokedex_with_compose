@@ -78,4 +78,5 @@ dependencies {
     implementation(libs.viewmodel)
     implementation(libs.kotlin.coroutine)
     implementation(libs.kotlin.coroutine.core)
+    implementation(libs.coil)
 }
