@@ -13,13 +13,13 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed interface PokedexApiState {
-    data class Success(val data: List<Pokemon>) : PokedexApiState
-    data class Error(val message: String) : PokedexApiState
-    object Loading : PokedexApiState
+sealed interface HomeScreenApiState {
+    data class Success(val data: List<Pokemon>) : HomeScreenApiState
+    data class Error(val message: String) : HomeScreenApiState
+    object Loading : HomeScreenApiState
 }
 
-class PokedexViewModel(
+class HomeViewModel(
     private val pokedexRepository: PokedexRepository
 ) : ViewModel() {
 
@@ -33,7 +33,7 @@ class PokedexViewModel(
      */
     private var limit = 20
 
-    var pokedexApiState: PokedexApiState by mutableStateOf(PokedexApiState.Loading)
+    var pokedexApiState: HomeScreenApiState by mutableStateOf(HomeScreenApiState.Loading)
         private set
 
     init {
@@ -51,7 +51,7 @@ class PokedexViewModel(
                 onSuccess = { response ->
                     val body = response.body()
                     if (response.isSuccessful && body != null) {
-                        pokedexApiState = PokedexApiState.Success(body.results)
+                        pokedexApiState = HomeScreenApiState.Success(body.results)
                         offset += body.results.size
                     } else {
                         errorHandling(response.code())
@@ -70,11 +70,11 @@ class PokedexViewModel(
      */
     private fun errorHandling(code: Int) {
         pokedexApiState = when (code) {
-            400 -> PokedexApiState.Error(message = "Bad Request")
-            401 -> PokedexApiState.Error(message = "Unauthorized")
-            403 -> PokedexApiState.Error(message = "Forbidden")
-            404 -> PokedexApiState.Error(message = "Not Found")
-            else -> PokedexApiState.Error(message = "その他のエラー")
+            400 -> HomeScreenApiState.Error(message = "Bad Request")
+            401 -> HomeScreenApiState.Error(message = "Unauthorized")
+            403 -> HomeScreenApiState.Error(message = "Forbidden")
+            404 -> HomeScreenApiState.Error(message = "Not Found")
+            else -> HomeScreenApiState.Error(message = "その他のエラー")
         }
     }
 
@@ -83,9 +83,9 @@ class PokedexViewModel(
      */
     private fun errorHandling(throwable: Throwable) {
         pokedexApiState = when (throwable) {
-            is IOException -> PokedexApiState.Error(message = "ネットワークエラー")
-            is HttpException -> PokedexApiState.Error(message = "サーバーエラー")
-            else -> PokedexApiState.Error(message = "その他のエラー")
+            is IOException -> HomeScreenApiState.Error(message = "ネットワークエラー")
+            is HttpException -> HomeScreenApiState.Error(message = "サーバーエラー")
+            else -> HomeScreenApiState.Error(message = "その他のエラー")
         }
     }
 
@@ -111,7 +111,7 @@ class PokedexViewModel(
                     val body = response.body()
                     if (response.isSuccessful && body != null) {
                         pokedexApiState =
-                            PokedexApiState.Success((pokedexApiState as PokedexApiState.Success).data + body.results)
+                            HomeScreenApiState.Success((pokedexApiState as HomeScreenApiState.Success).data + body.results)
                         offset += body.results.size
                     } else {
                         errorHandling(response.code())
@@ -134,13 +134,13 @@ class PokedexViewModel(
     }
 
     companion object {
-        private val TAG = PokedexViewModel::class.java.simpleName
+        private val TAG = HomeViewModel::class.java.simpleName
 
         val Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as PokedexApplication)
                 val pokedexRepository = application.pokedexDefaultContainer.pokemonRepository
-                PokedexViewModel(
+                HomeViewModel(
                     pokedexRepository = pokedexRepository
                 )
             }

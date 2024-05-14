@@ -8,7 +8,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pokedex_with_compose.R
 
@@ -32,8 +31,8 @@ fun PokedexApp(
             )
         }
     ) { innerPaddingValues ->
-        val viewModel: PokedexViewModel = viewModel(
-            factory = PokedexViewModel.Factory
+        val viewModel: HomeViewModel = viewModel(
+            factory = HomeViewModel.Factory
         )
         PokedexScreen(
             pokedexApiState = viewModel.pokedexApiState,

@@ -35,19 +35,19 @@ import kotlinx.coroutines.flow.filterNotNull
 
 @Composable
 fun PokedexScreen(
-    pokedexApiState: PokedexApiState,
+    pokedexApiState: HomeScreenApiState,
     retryAction: () -> Unit,
     loadMoreAction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (pokedexApiState) {
-        is PokedexApiState.Success -> {
+        is HomeScreenApiState.Success -> {
             GridListScreen(pokedexApiState.data, modifier, loadMoreAction)
         }
-        is PokedexApiState.Loading -> {
+        is HomeScreenApiState.Loading -> {
             LoadingScreen()
         }
-        is PokedexApiState.Error -> {
+        is HomeScreenApiState.Error -> {
             ErrorScreen(pokedexApiState.message, retryAction)
         }
         else -> {}
