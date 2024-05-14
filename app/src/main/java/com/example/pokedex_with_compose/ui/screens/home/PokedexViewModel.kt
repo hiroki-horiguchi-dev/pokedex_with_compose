@@ -14,9 +14,9 @@ import retrofit2.HttpException
 import java.io.IOException
 
 sealed interface PokedexApiState {
-    data class Success(val data: List<Pokemon>): PokedexApiState
-    data class Error(val message: String): PokedexApiState
-    object Loading: PokedexApiState
+    data class Success(val data: List<Pokemon>) : PokedexApiState
+    data class Error(val message: String) : PokedexApiState
+    object Loading : PokedexApiState
 }
 
 class PokedexViewModel(
@@ -24,9 +24,14 @@ class PokedexViewModel(
 ) : ViewModel() {
 
     /**
-     * API パラメータ　offset 管理
+     * API パラメータ　offset
      */
     private var offset = 0
+
+    /**
+     * API パラメータ size
+     */
+    private var limit = 20
 
     var pokedexApiState: PokedexApiState by mutableStateOf(PokedexApiState.Loading)
         private set
@@ -47,12 +52,13 @@ class PokedexViewModel(
                     val body = response.body()
                     if (response.isSuccessful && body != null) {
                         pokedexApiState = PokedexApiState.Success(body.results)
-                        offset += body.count
+                        offset += body.results.size
                     } else {
                         errorHandling(response.code())
                     }
                 },
                 onFailure = {
+                    resetApiParameter()
                     errorHandling(it)
                 }
             )
@@ -76,7 +82,7 @@ class PokedexViewModel(
      * 通信失敗時、エラーハンドリング
      */
     private fun errorHandling(throwable: Throwable) {
-        pokedexApiState = when(throwable) {
+        pokedexApiState = when (throwable) {
             is IOException -> PokedexApiState.Error(message = "ネットワークエラー")
             is HttpException -> PokedexApiState.Error(message = "サーバーエラー")
             else -> PokedexApiState.Error(message = "その他のエラー")
@@ -94,12 +100,41 @@ class PokedexViewModel(
      * 追加読み込み時に使用
      */
     fun loadMoreAction() {
-        fetchPokemonList()
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                pokedexRepository.fetchPokemonList(
+                    limit = limit,
+                    offset = offset
+                )
+            }.fold(
+                onSuccess = { response ->
+                    val body = response.body()
+                    if (response.isSuccessful && body != null) {
+                        pokedexApiState =
+                            PokedexApiState.Success((pokedexApiState as PokedexApiState.Success).data + body.results)
+                        offset += body.results.size
+                    } else {
+                        errorHandling(response.code())
+                    }
+                },
+                onFailure = {
+                    resetApiParameter()
+                    errorHandling(it)
+                }
+            )
+        }
+    }
+
+    /**
+     * エラー発生時、それまで読み込んでいた件数を取得するため初期化
+     */
+    private fun resetApiParameter() {
+        limit = offset
+        offset = 0
     }
 
     companion object {
         private val TAG = PokedexViewModel::class.java.simpleName
-        private const val limit = 20
 
         val Factory = viewModelFactory {
             initializer {

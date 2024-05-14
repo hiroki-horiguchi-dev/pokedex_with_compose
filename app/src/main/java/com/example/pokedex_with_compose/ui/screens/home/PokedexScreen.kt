@@ -8,12 +8,15 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -28,6 +31,7 @@ import coil.request.ImageRequest
 import com.example.pokedex_with_compose.R
 import com.example.pokedex_with_compose.model.Pokemon
 import com.example.pokedex_with_compose.ui.theme.PokeDex_with_composeTheme
+import kotlinx.coroutines.flow.filterNotNull
 
 @Composable
 fun PokedexScreen(
@@ -74,13 +78,27 @@ fun LoadingScreen() {
 
 @Composable
 fun GridListScreen(data: List<Pokemon>,modifier: Modifier = Modifier, loadMoreAction: () -> Unit) {
+    val listState = rememberLazyStaggeredGridState()
+
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
+        state = listState,
         verticalItemSpacing = 8.dp,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         content = {
             items(data) {
                 GridCard(it)
+            }
+            item {
+                LaunchedEffect(listState) {
+                    snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+                        .filterNotNull()
+                        .collect { lastVisibleItemIndex ->
+                            if (lastVisibleItemIndex >= data.size - 1) {
+                                loadMoreAction()
+                            }
+                        }
+                }
             }
         },
         modifier = modifier
