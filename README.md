@@ -43,6 +43,9 @@
    1. ディープリンク捌くのむずい問題があったらしいが、now in android のソースコード見た感じだと全然捌けていそうなので問題なさそうかな
    2. composable ( deeplinks ) で捌けているかんじかな
 
+# やりながら感想
+now in android を習ってモジュールに分けたほうが綺麗だねえ
+
 # この後の展望
 - [Now in Android](https://github.com/android/nowinandroid) を真似して作ってみる
   - 知りたいこと
