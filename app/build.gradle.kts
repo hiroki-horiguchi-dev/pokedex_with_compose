@@ -75,4 +75,10 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.retrofit.kotlinx.serialization.converter)
     implementation(libs.timber)
+    implementation(libs.viewmodel)
+    implementation(libs.kotlin.coroutine)
+    implementation(libs.kotlin.coroutine.core)
+    implementation(libs.coil)
+    implementation(libs.navigation.compose)
+    implementation(libs.navigation.runtime)
 }

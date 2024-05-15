@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">pokeDex_with_compose</string>
+    <string name="detail">pokeDex_with_compose_detail</string>
+    <string name="back_button">戻る</string>
 </resources>

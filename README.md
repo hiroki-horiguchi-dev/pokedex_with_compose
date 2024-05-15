@@ -39,6 +39,9 @@
 5. ViewModel, UI の作成 (app)
 6. UI テーマの設定(ぱっと見が黒っぽいのでそんな感じのテーマにする)
 7. アプリアイコンの設定(これはできればでいいや)
+8. now in android を参考にそれぞれのレイヤーでモジュール作って完全に独立させたい
+   1. ディープリンク捌くのむずい問題があったらしいが、now in android のソースコード見た感じだと全然捌けていそうなので問題なさそうかな
+   2. composable ( deeplinks ) で捌けているかんじかな
 
 # この後の展望
 - [Now in Android](https://github.com/android/nowinandroid) を真似して作ってみる
