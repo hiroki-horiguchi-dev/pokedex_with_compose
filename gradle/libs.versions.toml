@@ -18,6 +18,7 @@ timber = "5.0.1"
 viewmodel = "2.7.0"
 kotlin-coroutine = "1.8.0"
 coil = "2.4.0"
+navigation = "2.7.7"
 
 
 [libraries]
@@ -46,6 +47,8 @@ viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version
 kotlin-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlin-coroutine" }
 kotlin-coroutine-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutine" }
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+navigation-runtime = { module = "androidx.navigation:navigation-runtime-ktx", version.ref = "navigation" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
