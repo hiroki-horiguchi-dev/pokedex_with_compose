@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.Button
@@ -34,21 +35,22 @@ import com.example.pokedex_with_compose.ui.theme.PokeDex_with_composeTheme
 import kotlinx.coroutines.flow.filterNotNull
 
 @Composable
-fun PokedexScreen(
-    pokedexApiState: HomeScreenApiState,
+fun HomeScreen(
+    homeScreenApiState: HomeScreenApiState,
     retryAction: () -> Unit,
     loadMoreAction: () -> Unit,
+    onPokemonItemClicked: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when (pokedexApiState) {
+    when (homeScreenApiState) {
         is HomeScreenApiState.Success -> {
-            GridListScreen(pokedexApiState.data, modifier, loadMoreAction)
+            GridListScreen(homeScreenApiState.data, loadMoreAction, onPokemonItemClicked, modifier)
         }
         is HomeScreenApiState.Loading -> {
             LoadingScreen()
         }
         is HomeScreenApiState.Error -> {
-            ErrorScreen(pokedexApiState.message, retryAction)
+            ErrorScreen(homeScreenApiState.message, retryAction)
         }
         else -> {}
     }
@@ -71,13 +73,18 @@ fun ErrorScreen(message: String, retryAction: () -> Unit) {
 @Composable
 fun LoadingScreen() {
     Image(
-        modifier = Modifier.size(200.dp),
+        modifier = Modifier.fillMaxSize(),
         painter = painterResource(id = R.drawable.loading_img),
         contentDescription = "Loading")
 }
 
 @Composable
-fun GridListScreen(data: List<Pokemon>,modifier: Modifier = Modifier, loadMoreAction: () -> Unit) {
+fun GridListScreen(
+    data: List<Pokemon>,
+    loadMoreAction: () -> Unit,
+    onPokemonItemClicked: (String) -> Unit,
+    modifier: Modifier = Modifier
+    ) {
     val listState = rememberLazyStaggeredGridState()
 
     LazyVerticalStaggeredGrid(
@@ -87,7 +94,7 @@ fun GridListScreen(data: List<Pokemon>,modifier: Modifier = Modifier, loadMoreAc
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         content = {
             items(data) {
-                GridCard(it)
+                GridCard(it, onPokemonItemClicked)
             }
             item {
                 LaunchedEffect(listState) {
@@ -107,11 +114,15 @@ fun GridListScreen(data: List<Pokemon>,modifier: Modifier = Modifier, loadMoreAc
 }
 
 @Composable
-fun GridCard(pokemon: Pokemon, modifier: Modifier = Modifier) {
+fun GridCard(pokemon: Pokemon, onPokemonItemClicked: (String) -> Unit, modifier: Modifier = Modifier) {
     Card(
         elevation = CardDefaults.cardElevation()
     ){
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.clickable {
+                onPokemonItemClicked(pokemon.name)
+            }) {
             AsyncImage(
                 modifier = modifier.fillMaxWidth(),
                 model = ImageRequest.Builder(LocalContext.current)
@@ -143,7 +154,8 @@ private fun PreviewGridCard() {
             url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
         )
         GridCard(
-            pokemonFake
+            pokemonFake,
+            {}
         )
     }
 }
@@ -188,5 +200,5 @@ private fun PreviewList() {
             url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
         )
     )
-    GridListScreen(data = pokemonFakeList, modifier = Modifier) {}
+    GridListScreen(data = pokemonFakeList,{}, {}, modifier = Modifier)
 }
