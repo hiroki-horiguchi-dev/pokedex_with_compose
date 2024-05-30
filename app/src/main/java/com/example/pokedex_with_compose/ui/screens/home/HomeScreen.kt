@@ -57,7 +57,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun ErrorScreen(message: String, retryAction: () -> Unit) {
+private fun ErrorScreen(message: String, retryAction: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -71,7 +71,7 @@ fun ErrorScreen(message: String, retryAction: () -> Unit) {
 }
 
 @Composable
-fun LoadingScreen() {
+private fun LoadingScreen() {
     Image(
         modifier = Modifier.fillMaxSize(),
         painter = painterResource(id = R.drawable.loading_img),
@@ -79,7 +79,7 @@ fun LoadingScreen() {
 }
 
 @Composable
-fun GridListScreen(
+private fun GridListScreen(
     data: List<Pokemon>,
     loadMoreAction: () -> Unit,
     onPokemonItemClicked: (String) -> Unit,

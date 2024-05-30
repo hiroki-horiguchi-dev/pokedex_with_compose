@@ -22,7 +22,7 @@ sealed interface HomeScreenApiState {
 class HomeViewModel(
     private val pokedexRepository: PokedexRepository
 ) : ViewModel() {
-
+    /// TODO("このパラメータ群を PokedexClient にまとめて管理する")
     /**
      * API パラメータ　offset
      */
@@ -78,6 +78,7 @@ class HomeViewModel(
         }
     }
 
+    // TODO("詳細画面とハンドリングが同じなので Use Case を作ってそちらに共通処理としてまとめる")
     /**
      * 通信失敗時、エラーハンドリング
      */
